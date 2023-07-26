@@ -1,4 +1,3 @@
-import pandas as pd
 import streamlit as st
 #import plotly.express as px
 #import networkx as nx
@@ -7,12 +6,7 @@ from dotenv import load_dotenv
 import whisperx
 import gc
 import torch
-from tempfile import NamedTemporaryFile
-import os
-import numpy as np
-from scipy.io.wavfile import read, write
 import librosa
-load_dotenv()
 
 
 
@@ -22,7 +16,7 @@ def check_password():
 
     def password_entered():
         """Checks whether a password entered by the user is correct."""
-        if st.session_state["password"] == os.getenv("password"):
+        if st.session_state["password"] == st.secrets["password"]:
             st.session_state["password_correct"] = True
             del st.session_state["password"]  # don't store password
         else:
