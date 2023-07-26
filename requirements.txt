@@ -1,6 +1,6 @@
-git+https://github.com/m-bain/whisperx.git
 pytorch
 torchvision
 torchaudio
 librosa
 streamlit
+git+https://github.com/m-bain/whisperx.git
