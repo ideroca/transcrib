@@ -2,7 +2,6 @@ import streamlit as st
 #import plotly.express as px
 #import networkx as nx
 #import plotly.graph_objects as go
-from dotenv import load_dotenv
 import whisperx
 import gc
 import torch
