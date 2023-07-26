@@ -49,33 +49,34 @@ if check_password():
     # 1. Transcribe with original whisper (batched)
     if "model" not in st.session_state:   
         st.session_state["model"] = whisperx.load_model("small", device, compute_type=compute_type, language = 'en')
-    model = st.session_state["model"]
+    if audio_file != None:
+        model = st.session_state["model"]
 
-    audio,sr = librosa.load(audio_file)
-    #audio = whisperx.load_audio(audio_file.read())
-    result = model.transcribe(audio, batch_size=batch_size, language = 'en')
-    #print(result["segments"]) # before alignment
+        audio,sr = librosa.load(audio_file)
+        #audio = whisperx.load_audio(audio_file.read())
+        result = model.transcribe(audio, batch_size=batch_size, language = 'en')
+        #print(result["segments"]) # before alignment
 
-    # delete model if low on GPU resources
-    import gc; gc.collect(); torch.cuda.empty_cache(); del model
+        # delete model if low on GPU resources
+        import gc; gc.collect(); torch.cuda.empty_cache(); del model
 
-    # 2. Align whisper output
-    model_a, metadata = whisperx.load_align_model(language_code="en", device=device)
-    result = whisperx.align(result["segments"], model_a, metadata, audio, device, return_char_alignments=False)
+        # 2. Align whisper output
+        model_a, metadata = whisperx.load_align_model(language_code="en", device=device)
+        result = whisperx.align(result["segments"], model_a, metadata, audio, device, return_char_alignments=False)
 
-    print(result["segments"]) # after alignment
+        print(result["segments"]) # after alignment
 
-    # delete model if low on GPU resources
-    import gc; gc.collect(); torch.cuda.empty_cache(); del model_a
+        # delete model if low on GPU resources
+        import gc; gc.collect(); torch.cuda.empty_cache(); del model_a
 
-    # 3. Assign speaker labels
-    diarize_model = whisperx.DiarizationPipeline(use_auth_token=st.secrets["hf"], device=device)
+        # 3. Assign speaker labels
+        diarize_model = whisperx.DiarizationPipeline(use_auth_token=st.secrets["hf"], device=device)
 
-    # add min/max number of speakers if known
-    diarize_segments = diarize_model(audio_file,min_speakers=2, max_speakers=2)
-    # diarize_model(audio_file, min_speakers=min_speakers, max_speakers=max_speakers)
+        # add min/max number of speakers if known
+        diarize_segments = diarize_model(audio_file,min_speakers=2, max_speakers=2)
+        # diarize_model(audio_file, min_speakers=min_speakers, max_speakers=max_speakers)
 
-    result = whisperx.assign_word_speakers(diarize_segments, result)
+        result = whisperx.assign_word_speakers(diarize_segments, result)
 
-    for i in result['segments']:
-        st.write(f"{i['speaker']}: {i['text']}")
+        for i in result['segments']:
+            st.write(f"{i['speaker']}: {i['text']}")
