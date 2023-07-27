@@ -4,3 +4,4 @@ torchaudio
 librosa
 streamlit
 git+https://github.com/m-bain/whisperx.git
+soundfile==0.12.1
