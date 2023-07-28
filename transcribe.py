@@ -48,7 +48,7 @@ if check_password():
 
     # 1. Transcribe with original whisper (batched)
     if "model" not in st.session_state:   
-        st.session_state["model"] = whisperx.load_model("small", device, compute_type=compute_type, language = 'en')
+        st.session_state["model"] = whisperx.load_model("tiny", device, compute_type=compute_type, language = 'en')
     if audio_file != None:
         model = st.session_state["model"]
 
@@ -73,7 +73,7 @@ if check_password():
         diarize_model = whisperx.DiarizationPipeline(use_auth_token=st.secrets["hf"], device=device)
 
         # add min/max number of speakers if known
-        diarize_segments = diarize_model({"waveform": torch.tensor(audio), "sample_rate": sr},min_speakers=2, max_speakers=2)
+        diarize_segments = diarize_model(audio_file,min_speakers=2, max_speakers=2)
         # diarize_model(audio_file, min_speakers=min_speakers, max_speakers=max_speakers)
 
         result = whisperx.assign_word_speakers(diarize_segments, result)
