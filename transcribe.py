@@ -6,6 +6,7 @@ import whisperx
 import gc
 import torch
 import librosa
+import numpy as np
 
 
 
